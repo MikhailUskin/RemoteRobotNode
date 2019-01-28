@@ -25,6 +25,28 @@ char hello[13] = "hello world!";
 ros::Publisher chatter("chatter", &str_msg);
 ros::NodeHandle nh;
 
+bool redirectActuator()
+{
+    actuator_data_t actuatorData;
+    // TODO: Redirect actuator data from ROS listener
+    actuatorData.distance = 100;
+    actuatorData.azimuth = 0;   
+    return cmdParser.push(actuatorData);
+}
+
+bool redirectResponse()
+{
+    sensor_data_t sensorData;
+    if (cmdParser.pull(sensorData))
+    { 
+        // TODO: Redirect sensor data to ROS publisher
+        Serial.print("\nSensor data received");
+        return true;
+    }
+
+    return false;
+}
+
 void setup()
 {
     Serial.begin(115200);
@@ -50,53 +72,20 @@ void setup()
     }
     
     statusLed.setOn();
-
-    //actuator_data_t actuatorData;
-    //actuatorData.distance = 25700;
-    //actuatorData.azimuth = 0;
-    //adjustActuator(actuatorData);
-}
-
-void adjustActuator(actuator_data_t& rActuatorData)
-{
-    if (cmdParser.push(rActuatorData))
-    {
-        Serial.println("Data sent");
-    }
-    else
-    {
-        Serial.println("Sent failed");
-    }
-}
-
-void handleResponse()
-{
-    sensor_data_t sensorData;
-    actuator_data_t actuatorData;
-    
-    if (cmdParser.pull(sensorData))
-    {
-        actuatorData.distance = 100;
-        actuatorData.azimuth = 0;   
-        adjustActuator(actuatorData);
-    }
 }
 
 void loop()
 {
     if(nh.connected() == 1)
     {
-      statusLed.setOn();
-      
-      str_msg.data = hello;
-      chatter.publish( &str_msg );
+        statusLed.setOn();
+        str_msg.data = hello;
+        chatter.publish( &str_msg );
 
-      actuator_data_t actuatorData;
-      actuatorData.distance = 100;
-      //actuatorData.azimuth = 0;
-      adjustActuator(actuatorData);
-  
-      //handleResponse();
+        if (redirectResponse())
+        {
+            redirectActuator();
+        }
     }
     else
     {

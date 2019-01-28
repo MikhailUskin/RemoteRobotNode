@@ -31,10 +31,42 @@ static void left_wheel_interrupt()
   g_pWheelPlatform->DistanceCounterLeft();
 }
 
+bool executeActuator()
+{
+    actuator_data_t actuatorData;
+  
+    if (cmdParser.pull(actuatorData))
+    {
+        //Serial.println("\nActuator data received");
+      
+        g_pWheelPlatform->Turn(actuatorData.azimuth);
+        g_pWheelPlatform->Run(actuatorData.distance);
+        
+        return true;    
+     }
+
+    return false;
+}
+
+bool executeResponse()
+{
+    sensor_data_t sensorData;
+  
+    g_pTurningPlatform->SetAngle(0);
+    sensorData.range_left = g_pRangeFinder->Measure();  
+  
+    g_pTurningPlatform->SetAngle(90);
+    sensorData.range_front = g_pRangeFinder->Measure(); 
+  
+    g_pTurningPlatform->SetAngle(180);
+    sensorData.range_right = g_pRangeFinder->Measure(); 
+
+    return cmdParser.push(sensorData);
+}
+
 void setup()
 {	
   	cmdParser.init(9600);
-    Serial.begin(115200);
 
   	/* Make a new rangefinder */
   	g_pRangeFinder = new RangeFinder(PIN_TRIG, PIN_ECHO);
@@ -48,46 +80,19 @@ void setup()
   	/* Interrupt Connecting */
   	SetInterrupt(PIN_ODO_R, right_wheel_interrupt);
   	SetInterrupt(PIN_ODO_L, left_wheel_interrupt);
-}
 
-void stepActuator(const actuator_data_t& actuatorData)
-{
-  g_pWheelPlatform->Turn(actuatorData.azimuth);
-  g_pWheelPlatform->Run(actuatorData.distance);
-}
-
-void stepSensor(sensor_data_t& sensorData)
-{
-  g_pTurningPlatform->SetAngle(0);
-  sensorData.range_left = g_pRangeFinder->Measure();  
-
-  g_pTurningPlatform->SetAngle(90);
-  sensorData.range_front = g_pRangeFinder->Measure(); 
-
-  g_pTurningPlatform->SetAngle(180);
-  sensorData.range_right = g_pRangeFinder->Measure(); 
+    executeResponse();
 }
 
 void loop()
 {
-    sensor_data_t sensorData;
-    actuator_data_t actuatorData;
-
-    if (cmdParser.pull(actuatorData))
+    if (executeActuator())
     {
         statusLed.setOn();
-        Serial.println("Data received");
-
-        stepActuator(actuatorData);
-        //stepSensor(sensorData);
-        //cmdParser.push(sensorData);
-    }
-    else
-    {
-        Serial.println("No data");
-    }
-
-    delay(300);
+        executeResponse();
+    } 
+    
+    delay(100);
 }
 
 /* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: MAIN FILE : FILE END */

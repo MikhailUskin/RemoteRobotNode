@@ -18,12 +18,8 @@ typedef struct
 template<typename PullType, typename PushType>
 class CommandParser
 {
-private:
-    SoftwareSerial _port;
-  
 public:
     CommandParser()
-        : _port(6, 7) // RX, TX
     {
     }
     
@@ -33,27 +29,17 @@ public:
   
     void init(unsigned baudrate)
     {
-        _port.begin(baudrate);  
+        //_port.begin(baudrate);
+        Serial.begin(baudrate, SERIAL_8E2);
     }
     
     bool pull(PullType& rData)
     {
-        return (_port.available() >= sizeof(PullType)) && (_port.readBytes((uint8_t*)(&rData), sizeof(PullType)) == sizeof(PullType));
-
-        /*
-        if (Serial.available() < sizeof(PullType))
-            return false;
-        
-        uint8_t* pRawData = (uint8_t*)(&rData);
-        while (Serial.available() > 0)
-        {
-            *(pRawData++) = Serial.read();
-        }
-        */
+        return (Serial.available() >= sizeof(PullType)) && (Serial.readBytes((uint8_t*)(&rData), sizeof(PullType)) == sizeof(PullType));
     }
       
   	bool push(const PushType& rData)
   	{
-          return _port.write((const uint8_t*)(&rData), sizeof(PushType)) == sizeof(PushType);
+          return Serial.write((const uint8_t*)(&rData), sizeof(PushType)) == sizeof(PushType);
   	}
 };

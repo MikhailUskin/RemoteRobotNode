@@ -17,26 +17,39 @@ template<typename PullType, typename PushType>
 class CommandParser
 {
 public:
-  CommandParser()
-  {
-  }
-  
-  ~CommandParser()
-  {     
-  }
-
-  void init(unsigned baudrate)
-  {
-      Serial2.begin(baudrate);    
-  }
-  
-  bool pull(PullType& rData)
-  {
-      return (Serial2.available() == sizeof(PullType)) && (Serial2.readBytes((char*)(&rData), sizeof(PullType)) == sizeof(PullType));
-  }
+    CommandParser()
+    {
+    }
     
-	bool push(const PushType& rData)
-	{
-      return Serial2.write((const uint8_t*)(&rData), sizeof(PushType)) == sizeof(PushType);
-	}
+    ~CommandParser()
+    {     
+    }
+  
+    void init(unsigned baudrate)
+    {
+        Serial2.begin(baudrate, SERIAL_8E2);    
+    }
+    
+    bool pull(PullType& rData)
+    {
+        Serial.println(Serial2.available(), DEC);
+      
+        bool bSuccess = (Serial2.available() == sizeof(PullType)) && 
+            (Serial2.readBytes((char*)(&rData), sizeof(PullType)) == sizeof(PullType));
+
+        flushBuffer();
+        return bSuccess;
+    }
+      
+  	bool push(const PushType& rData)
+  	{
+        return Serial2.write((const uint8_t*)(&rData), sizeof(PushType)) == sizeof(PushType);
+  	}
+
+private:
+    bool flushBuffer()
+    {
+        while(Serial.available() > 0) Serial.read();
+        return true;
+    }
 };

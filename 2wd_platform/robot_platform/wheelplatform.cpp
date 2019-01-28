@@ -18,7 +18,7 @@ WheelPlatform::WheelPlatform(uint16_t in_1, uint16_t in_2, uint16_t in_3, uint16
 	digitalWrite(m_pin_4, LOW);
 
 	digitalWrite(m_pin_a, LOW);
-	//digitalWrite(m_pin_b, LOW);
+	digitalWrite(m_pin_b, LOW);
 
 	pinMode(m_pin_1, OUTPUT);
 	pinMode(m_pin_2, OUTPUT);
@@ -26,7 +26,7 @@ WheelPlatform::WheelPlatform(uint16_t in_1, uint16_t in_2, uint16_t in_3, uint16
 	pinMode(m_pin_4, OUTPUT);
 
 	pinMode(m_pin_a, OUTPUT);
-	//pinMode(m_pin_b, OUTPUT);
+	pinMode(m_pin_b, OUTPUT);
 
 	m_status = STOP;
 
@@ -51,7 +51,7 @@ void WheelPlatform::Init()
 	digitalWrite(m_pin_4, LOW);
 
 	digitalWrite(m_pin_a, LOW);
-	//digitalWrite(m_pin_b, LOW);
+	digitalWrite(m_pin_b, LOW);
 
 	SetStatus(STOP);
 }
@@ -92,7 +92,7 @@ void WheelPlatform::Run(uint8_t direction, uint16_t distance)
 	m_distance_l = distance;
 
 	analogWrite(m_pin_a, c_wheel_speed_r);
-	//analogWrite(m_pin_b, c_wheel_speed_l);
+	analogWrite(m_pin_b, c_wheel_speed_l);
 
 	SetStatus(RUN);
 }
@@ -128,7 +128,7 @@ void WheelPlatform::Turn(uint8_t side, uint16_t distance)
 	m_distance_l = distance;
 
 	analogWrite(m_pin_a, c_wheel_speed_r);
-	//analogWrite(m_pin_b, c_wheel_speed_l);
+	analogWrite(m_pin_b, c_wheel_speed_l);
 
 	SetStatus(RUN);
 }
@@ -136,7 +136,7 @@ void WheelPlatform::Turn(uint8_t side, uint16_t distance)
 void WheelPlatform::Stop()
 {
 	analogWrite(m_pin_a, 0);
-	//analogWrite(m_pin_b, 0);
+	analogWrite(m_pin_b, 0);
 
 	m_distance_r = 0;
 	m_distance_l = 0;
