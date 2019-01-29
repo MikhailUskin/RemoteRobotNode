@@ -1,7 +1,4 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: turningplatform.h : FILE BEGIN */
-
-#ifndef _TURNINGPLATFORM_h
-#define _TURNINGPLATFORM_h
+#pragma once
 
 #include <Arduino.h>
 #include <Servo.h>
@@ -39,7 +36,3 @@ class TurningPlatform
     void     SetAngle(uint16_t angle); // Set Angle Value
     uint16_t GetAngle();               // Get Current Angle Value
 };
-
-#endif
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: turningplatform.h : FILE END */

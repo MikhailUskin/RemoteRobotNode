@@ -1,9 +1,10 @@
 #include <stdlib.h>
 #include "WiFi.h"
+
 #include <ros.h>
-#include <std_msgs/String.h>
-#include <std_msgs/Bool.h>
-#include <std_msgs/Empty.h>
+#include <ros/time.h>
+#include <geometry_msgs/Twist.h>
+#include <sensor_msgs/Range.h>
 
 #include "CommandParser.h"
 #include "StatusLed.h"
@@ -19,26 +20,45 @@ const uint16_t serverPort = 11411;
 CommandParser<sensor_data_t, actuator_data_t> cmdParser;
 StatusLed statusLed;
 
-// Set the rosserial socket server IP address and port
-std_msgs::String str_msg; 
-char hello[13] = "hello world!";
-ros::Publisher chatter("chatter", &str_msg);
-ros::NodeHandle nh;
+// ROS node declaration
+ros::NodeHandle BridgeNode;
 
-bool redirectActuator()
+// ROS publishers
+sensor_msgs::Range rangeLeftMessage;
+sensor_msgs::Range rangeFrontMessage;
+sensor_msgs::Range rangeRightMessage;
+ros::Publisher rangeLeftPublisher("/car/range_left", &rangeLeftMessage);
+ros::Publisher rangeFrontPublisher("/car/range_front", &rangeFrontMessage);
+ros::Publisher rangeRightPublisher("/car/range_right", &rangeRightMessage);
+
+void redirectActuator(const geometry_msgs::Twist& rActuatorData);
+
+// ROS SUBSCRIBERS
+geometry_msgs::Twist actuatorDataMessage;
+ros::Subscriber<geometry_msgs::Twist> ActuatorDataSubscriber("/car/actuator_data", &redirectActuator);
+
+void redirectActuator(const geometry_msgs::Twist& rActuatorData)
 {
     actuator_data_t actuatorData;
-    // TODO: Redirect actuator data from ROS listener
-    actuatorData.distance = 100;
-    actuatorData.azimuth = 0;   
-    return cmdParser.push(actuatorData);
+    actuatorData.distance = rActuatorData.linear.x;
+    actuatorData.azimuth = rActuatorData.angular.z;   
+    cmdParser.push(actuatorData);
 }
 
 bool redirectResponse()
 {
     sensor_data_t sensorData;
     if (cmdParser.pull(sensorData))
-    { 
+    {
+        rangeLeftMessage.range = sensorData.range_left;
+        rangeLeftPublisher.publish(&rangeLeftMessage);
+
+        rangeFrontMessage.range = sensorData.range_front;       
+        rangeFrontPublisher.publish(&rangeFrontMessage);
+
+        rangeRightMessage.range = sensorData.range_right;     
+        rangeRightPublisher.publish(&rangeRightMessage);
+      
         // TODO: Redirect sensor data to ROS publisher
         Serial.print("\nSensor data received");
         return true;
@@ -47,45 +67,73 @@ bool redirectResponse()
     return false;
 }
 
-void setup()
+void connectNetwork()
 {
-    Serial.begin(115200);
-    cmdParser.init(9600);
-  
-    // Connect the ESP32 the the wifi AP
+    // Connect ESP32 to the Wi-Fi netowrk
     WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED)
     {
       delay(500);
       statusLed.toggle();
-    }
-  
+    }  
+}
+
+void initializeROS()
+{
     // Set the connection to rosserial socket server
-    nh.getHardware()->setConnection(server, serverPort);
-    nh.advertise(chatter);
-  
-    while(nh.connected() == 0)
+    BridgeNode.getHardware()->setConnection(server, serverPort);
+    BridgeNode.initNode();
+    BridgeNode.advertise(rangeLeftPublisher);
+    BridgeNode.advertise(rangeFrontPublisher);
+    BridgeNode.advertise(rangeRightPublisher);
+    BridgeNode.subscribe(ActuatorDataSubscriber);
+
+    // Initialize messages to public.
+    rangeLeftMessage.radiation_type = sensor_msgs::Range::ULTRASOUND;
+    rangeLeftMessage.header.frame_id =  "/ultrasound";
+    rangeLeftMessage.field_of_view = 0.1;
+    rangeLeftMessage.min_range = 0.0;
+    rangeLeftMessage.max_range = 20;
+    rangeFrontMessage.radiation_type = sensor_msgs::Range::ULTRASOUND;
+    rangeFrontMessage.header.frame_id =  "/ultrasound";
+    rangeFrontMessage.field_of_view = 0.1;
+    rangeFrontMessage.min_range = 0.0;
+    rangeFrontMessage.max_range = 20;
+    rangeRightMessage.radiation_type = sensor_msgs::Range::ULTRASOUND;
+    rangeRightMessage.header.frame_id =  "/ultrasound";
+    rangeRightMessage.field_of_view = 0.1;
+    rangeRightMessage.min_range = 0.0;
+    rangeRightMessage.max_range = 20;        
+}
+
+void connectROS()
+{
+    while(BridgeNode.connected() == 0)
     {
-        nh.spinOnce();
+        BridgeNode.spinOnce();
         delay(500);
         statusLed.toggle();
     }
     
-    statusLed.setOn();
+    statusLed.setOn();  
+}
+
+void setup()
+{
+    Serial.begin(115200);
+    cmdParser.init(9600);
+  
+    connectNetwork();
+    initializeROS();
+    connectROS();
 }
 
 void loop()
 {
-    if(nh.connected() == 1)
+    if(BridgeNode.connected() == 1)
     {
         statusLed.setOn();
-        str_msg.data = hello;
-        chatter.publish( &str_msg );
-
-        if (redirectResponse())
-        {
-            redirectActuator();
-        }
+        redirectResponse();
     }
     else
     {
@@ -93,6 +141,6 @@ void loop()
         // TODO: Restart module
     }
     
-    nh.spinOnce();
-    delay(500);
+    BridgeNode.spinOnce();
+    delay(200);
 }

@@ -1,5 +1,3 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: rangefinder.cpp : FILE BEGIN */
-
 #include "rangefinder.h"
 
 RangeFinder::RangeFinder(uint16_t trig, uint16_t echo)
@@ -39,4 +37,3 @@ uint16_t RangeFinder::Measure()
   
   return m_distance;
 }
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: rangefinder.cpp : FILE END */

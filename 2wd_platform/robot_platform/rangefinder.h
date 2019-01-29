@@ -1,7 +1,4 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: rangefinder.h : FILE BEGIN */
-
-#ifndef _RANGEFINDER_h
-#define _RANGEFINDER_h
+#pragma once
 
 #include <Arduino.h>
 #include <stdbool.h>
@@ -37,7 +34,3 @@ class RangeFinder
     void      Init();        // Initialization
     uint16_t  Measure();     // Make one measure  
 };
-
-#endif
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: rangefinder.h : FILE END */

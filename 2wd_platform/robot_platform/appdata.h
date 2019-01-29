@@ -1,4 +1,4 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: appdata.h : FILE BEGIN */
+#pragma once
 
 #include "Arduino.h"
 
@@ -18,8 +18,4 @@
 #define PIN_ODO_R (2)   // Right Odometer Interrupt pin number
 #define PIN_ODO_L (3)   // Left  Odometer Interrupt pin number
 
-
 void SetInterrupt(uint8_t pin, void(*callback)(void));
-
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: appdata.h : FILE END */

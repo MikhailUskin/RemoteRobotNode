@@ -1,5 +1,3 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: turningplatform.cpp : FILE BEGIN */
-
 #include "turningplatform.h"
 
 TurningPlatform::TurningPlatform(uint16_t pwm_pin)
@@ -49,5 +47,3 @@ uint16_t TurningPlatform::GetAngle()
 
   return m_angle;
 }
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: turningplatform.cpp : FILE END */

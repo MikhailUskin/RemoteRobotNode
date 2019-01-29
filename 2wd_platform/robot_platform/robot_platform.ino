@@ -1,9 +1,3 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: MAIN FILE : FILE BEGIN */
-
-/*
-	Go to loop() func. It contains something interesting...
-*/
-
 #include "appdata.h"
 #include "rangefinder.h"
 #include "turningplatform.h"
@@ -61,12 +55,14 @@ bool executeResponse()
     g_pTurningPlatform->SetAngle(180);
     sensorData.range_right = g_pRangeFinder->Measure(); 
 
+    g_pTurningPlatform->SetAngle(90);
     return cmdParser.push(sensorData);
 }
 
 void setup()
 {	
   	cmdParser.init(9600);
+    delay(300); // Suppose, during this delay Wi-Fi bridge will raise up.
 
   	/* Make a new rangefinder */
   	g_pRangeFinder = new RangeFinder(PIN_TRIG, PIN_ECHO);
@@ -94,58 +90,3 @@ void loop()
     
     delay(100);
 }
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: MAIN FILE : FILE END */
-
-
-
-
-
-
-
-
-
-
-
-/*
-                                   ``````````                                   
-                      ``````.........................``````                     
-                ```...........................................```               
-            ``.....................................................```          
-        ``.............................................................``       
-      ``...........                                        ...............`     
-    ``..........                                             ..............``   
-    `.........            NEVER MIND, IT'S JUST A CAT          ..............`  
-   `..........                                                    ...........`  
-   `........                 TRY TO MAKE IT WORKING                 .........`  
-   `..........                                                     ..........`  
-    `...........            GO   TO  CODE, LAZY A*S              ...........`   
-      `...........                                  /           ...........`     
-        ``..........                                         ..........```      
-          ```.......................................................```         
-           `  ````.............................................````             
-          .s/:`     ``````.............................``````                   
-          +o+/o-             ```````````````````````                            
-          oh:o:h-.-:::--..`          ``                                         
-          smoshyo+++oo//++o+/:.   `-sso:                                        
-        `:ys:..`          ``-/oo.-shsss:                                        
-       `++.                   `-smh/:os`                                        
-       +/ -ss:            ```   `+d+d+`                                         
-     ./o``hNMh          `+hdy.    od+`                                          
-     `d+-`-++.   --`    :dNMN:    :o                                            
-    .:d/:`   ````hs`  `  -++-`    :o                                            
-   `.:h+-`   `+//h-../+      .+/. +o                                            
-   `.-/h.     ```-/++:`     `:-` `d-                                            
-       -s:``              ./..::.o+                                             
-        `:+o/.`            .+/`-/o:                                             
-           `doo+:`          `-//` +/                                            
-            y.`.:.          `.`   `o/                                           
-            h-                     `y:                                          
-            d/`+                 `` `d-                                         
-           `do.y`               :+:  -d.                                        
-           `dsoh:.              +o+   :h`                                       
-           `dy.o++              :-o.   +h`                                      
-            dd`.`                +-.    sy`                                     
-            yo`                  .      `o:                                     
-
-*/

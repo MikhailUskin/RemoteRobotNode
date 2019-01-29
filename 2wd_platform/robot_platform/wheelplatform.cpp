@@ -1,5 +1,3 @@
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: wheelplatform.cpp : FILE BEGIN */
-
 #include "wheelplatform.h"
 
 WheelPlatform::WheelPlatform(uint16_t in_1, uint16_t in_2, uint16_t in_3, uint16_t in_4, uint16_t en_a, uint16_t en_b)
@@ -207,5 +205,3 @@ void WheelPlatform::DistanceCounterLeft()
 		Stop();
 	}
 }
-
-/* TGT HAPPY NEW ARDUINO ROBOT PROJECT 2018: wheelplatform.cpp : FILE END */
