@@ -50,12 +50,17 @@ bool redirectResponse()
     sensor_data_t sensorData;
     if (cmdParser.pull(sensorData))
     {
+        ros::Time currentTime = BridgeNode.now();
+
+        rangeLeftMessage.header.stamp = currentTime;
         rangeLeftMessage.range = sensorData.range_left;
         rangeLeftPublisher.publish(&rangeLeftMessage);
 
+        rangeFrontMessage.header.stamp = currentTime;
         rangeFrontMessage.range = sensorData.range_front;       
         rangeFrontPublisher.publish(&rangeFrontMessage);
 
+        rangeRightMessage.header.stamp = currentTime;
         rangeRightMessage.range = sensorData.range_right;     
         rangeRightPublisher.publish(&rangeRightMessage);
       
