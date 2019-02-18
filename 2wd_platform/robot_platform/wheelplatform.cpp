@@ -1,4 +1,4 @@
-#include "wheelplatform.h"
+ #include "wheelplatform.h"
 
 WheelPlatform::WheelPlatform(uint16_t in_1, uint16_t in_2, uint16_t in_3, uint16_t in_4, uint16_t en_a, uint16_t en_b)
 {
@@ -59,7 +59,7 @@ uint8_t WheelPlatform::GetStatus()
 	return m_status;
 }
 
-void WheelPlatform::Run(uint8_t direction, uint16_t distance)
+void WheelPlatform::Run(uint8_t direction, uint16_t counts)
 {
 	if (direction == FORWARD)
 	{
@@ -86,8 +86,8 @@ void WheelPlatform::Run(uint8_t direction, uint16_t distance)
 		digitalWrite(m_pin_4, LOW);
 	}
 
-	m_distance_r = distance;
-	m_distance_l = distance;
+	m_distance_r = counts * _params._RIGHT_WHEEL_CALIBRATION_FACTOR;
+	m_distance_l = counts * _params._LEFT_WHEEL_CALIBRATION_FACTOR;
 
 	analogWrite(m_pin_a, c_wheel_speed_r);
 	analogWrite(m_pin_b, c_wheel_speed_l);
@@ -95,7 +95,7 @@ void WheelPlatform::Run(uint8_t direction, uint16_t distance)
 	SetStatus(RUN);
 }
 
-void WheelPlatform::Turn(uint8_t side, uint16_t distance)
+void WheelPlatform::Turn(uint8_t side, uint16_t counts)
 {
 	if (side == LEFT)
 	{
@@ -122,8 +122,8 @@ void WheelPlatform::Turn(uint8_t side, uint16_t distance)
 		digitalWrite(m_pin_4, LOW);
 	}
 
-	m_distance_r = distance;
-	m_distance_l = distance;
+  m_distance_r = counts * _params._RIGHT_WHEEL_CALIBRATION_FACTOR;
+  m_distance_l = counts * _params._LEFT_WHEEL_CALIBRATION_FACTOR;
 
 	analogWrite(m_pin_a, c_wheel_speed_r);
 	analogWrite(m_pin_b, c_wheel_speed_l);
@@ -148,15 +148,17 @@ void WheelPlatform::Stop()
 	SetStatus(STOP);
 }
 
-void WheelPlatform::Run(int distance)
+void WheelPlatform::Run(double distance)
 {
+  uint16_t counts = abs(distance / _params._METERS_PER_COUNT);
+  
   if (distance > 0)
   {
-    this->Run(FORWARD, distance);
+    this->Run(FORWARD, counts);
   }
   else if (distance < 0)
   {
-    this->Run(REVERSE, abs(distance));    
+    this->Run(REVERSE, counts);    
   }
   
   while (this->GetStatus() == RUN) 
@@ -165,15 +167,17 @@ void WheelPlatform::Run(int distance)
   }
 }
 
-void WheelPlatform::Turn(int azimuth)
+void WheelPlatform::Turn(double azimuth)
 {
+  uint16_t counts = abs(azimuth / _params._RAD_PER_COUNT);
+  
   if (azimuth > 0)
   {
-    this->Turn(RIGHT, azimuth);
+    this->Turn(RIGHT, counts);
   }
   else if (azimuth < 0)
   {
-    this->Turn(LEFT, abs(azimuth));    
+    this->Turn(LEFT, counts);    
   }
   
   while (this->GetStatus() == RUN) 

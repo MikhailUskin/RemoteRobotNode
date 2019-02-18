@@ -7,7 +7,7 @@ void SetInterrupt(uint8_t pin, void(*callback)(void))
 	if (interrupt_number == NOT_AN_INTERRUPT)
 		return;
 
-	pinMode(pin, INPUT);
+	pinMode(pin, INPUT_PULLUP);
 
 	attachInterrupt(interrupt_number, callback, CHANGE);
 }

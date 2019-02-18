@@ -31,13 +31,11 @@ bool executeActuator()
   
     if (cmdParser.pull(actuatorData))
     {
-        //Serial.println("\nActuator data received");
-      
         g_pWheelPlatform->Turn(actuatorData.azimuth);
         g_pWheelPlatform->Run(actuatorData.distance);
         
         return true;    
-     }
+    }
 
     return false;
 }
@@ -84,9 +82,9 @@ void loop()
 {
     if (executeActuator())
     {
-        statusLed.setOn();
+        statusLed.toggle();
         executeResponse();
     } 
-    
-    delay(100);
+
+    delay(1000);
 }

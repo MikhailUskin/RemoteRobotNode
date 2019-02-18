@@ -2,15 +2,15 @@
 
 typedef struct 
 {
-    uint16_t range_left;
-    uint16_t range_front;
-    uint16_t range_right;
+    float range_left;
+    float range_front;
+    float range_right;
 } __attribute__((__packed__)) sensor_data_t;
 
 typedef struct 
 {
-    int16_t distance;
-    int16_t azimuth;
+    float distance;
+    float azimuth;
 } __attribute__((__packed__)) actuator_data_t;
 
 template<typename PullType, typename PushType>
@@ -32,8 +32,6 @@ public:
     
     bool pull(PullType& rData)
     {
-        Serial.println(Serial2.available(), DEC);
-      
         bool bSuccess = (Serial2.available() == sizeof(PullType)) && 
             (Serial2.readBytes((char*)(&rData), sizeof(PullType)) == sizeof(PullType));
 
@@ -49,7 +47,7 @@ public:
 private:
     bool flushBuffer()
     {
-        while(Serial.available() > 0) Serial.read();
+        while(Serial2.available() > 0) Serial2.read();
         return true;
     }
 };

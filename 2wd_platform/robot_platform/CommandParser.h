@@ -1,18 +1,16 @@
 #pragma once
 
-#include <SoftwareSerial.h>
-
 typedef struct 
 {
-    uint16_t range_left;
-    uint16_t range_front;
-    uint16_t range_right;
+    float range_left;
+    float range_front;
+    float range_right;
 } __attribute__((__packed__)) sensor_data_t;
 
 typedef struct 
 {
-    int16_t distance;
-    int16_t azimuth;
+    float distance;
+    float azimuth;
 } __attribute__((__packed__)) actuator_data_t;
 
 template<typename PullType, typename PushType>
@@ -29,7 +27,6 @@ public:
   
     void init(unsigned baudrate)
     {
-        //_port.begin(baudrate);
         Serial.begin(baudrate, SERIAL_8E2);
     }
     

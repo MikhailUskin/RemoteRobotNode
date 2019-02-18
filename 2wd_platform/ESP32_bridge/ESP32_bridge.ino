@@ -41,7 +41,13 @@ void redirectActuator(const geometry_msgs::Twist& rActuatorData)
 {
     actuator_data_t actuatorData;
     actuatorData.distance = rActuatorData.linear.x;
-    actuatorData.azimuth = rActuatorData.angular.z;   
+    actuatorData.azimuth = rActuatorData.angular.z;
+    Serial.print("Actuate at: distance = ");
+    Serial.print(actuatorData.distance);
+    Serial.print("m; azimuth = ");
+    Serial.print(actuatorData.azimuth);
+    Serial.println("rad");
+    
     cmdParser.push(actuatorData);
 }
 
@@ -50,6 +56,7 @@ bool redirectResponse()
     sensor_data_t sensorData;
     if (cmdParser.pull(sensorData))
     {
+        Serial.println("Sensor data received");
         ros::Time currentTime = BridgeNode.now();
 
         rangeLeftMessage.header.stamp = currentTime;
@@ -63,9 +70,7 @@ bool redirectResponse()
         rangeRightMessage.header.stamp = currentTime;
         rangeRightMessage.range = sensorData.range_right;     
         rangeRightPublisher.publish(&rangeRightMessage);
-      
-        // TODO: Redirect sensor data to ROS publisher
-        Serial.print("\nSensor data received");
+
         return true;
     }
 
@@ -98,17 +103,17 @@ void initializeROS()
     rangeLeftMessage.header.frame_id =  "/ultrasound";
     rangeLeftMessage.field_of_view = 0.1;
     rangeLeftMessage.min_range = 0.0;
-    rangeLeftMessage.max_range = 20;
+    rangeLeftMessage.max_range = 5;
     rangeFrontMessage.radiation_type = sensor_msgs::Range::ULTRASOUND;
     rangeFrontMessage.header.frame_id =  "/ultrasound";
     rangeFrontMessage.field_of_view = 0.1;
     rangeFrontMessage.min_range = 0.0;
-    rangeFrontMessage.max_range = 20;
+    rangeFrontMessage.max_range = 5;
     rangeRightMessage.radiation_type = sensor_msgs::Range::ULTRASOUND;
     rangeRightMessage.header.frame_id =  "/ultrasound";
     rangeRightMessage.field_of_view = 0.1;
     rangeRightMessage.min_range = 0.0;
-    rangeRightMessage.max_range = 20;        
+    rangeRightMessage.max_range = 5;        
 }
 
 void connectROS()

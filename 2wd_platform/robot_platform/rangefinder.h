@@ -18,7 +18,6 @@ class RangeFinder
     /* Members */
   
     uint16_t m_duration; // Measured Pulse Duration
-    uint16_t m_distance; // Calculated Distance
     uint16_t m_trig_pin; // Trig Pin Number
     uint16_t m_echo_pin; // Echo Pin Number
  
@@ -31,6 +30,6 @@ class RangeFinder
   
     /* Methods */
   
-    void      Init();        // Initialization
-    uint16_t  Measure();     // Make one measure  
+    void   Init();        // Initialization
+    double Measure();     // Mesaure distance in meters.
 };
